@@ -27,7 +27,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 pygame.display.set_caption("Многострадальная змейка стдудента 53 когорты.")
 """Заголовок окна игрового поля:"""
 clock = pygame.time.Clock()
-"""Настройка времени:"""
+"""Настройка времени."""
 
 
 class GameObject:
