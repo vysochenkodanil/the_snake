@@ -1,6 +1,8 @@
-from random import randint
-import pygame
 """Вызов необходимых импортов."""
+import pygame
+
+from random import randint
+
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
 GRID_SIZE = 20
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
@@ -41,7 +43,8 @@ class GameObject:
 
     def draw(self):
         """Родительский метод отрисовки."""
-        pass
+        raise NotImplementedError
+    # TODO переопределить в дочерних классах
 
 
 class Apple(GameObject):
@@ -78,6 +81,7 @@ class Snake(GameObject):
         self.next_direction = None
         self.body_color = SNAKE_COLOR
         self.last = None
+        self.reset = self.get_head_position() in self.positions[1:]
 
     def draw(self):
         """Метод отрисовки объукта класса Snake."""
@@ -85,7 +89,8 @@ class Snake(GameObject):
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
-        head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
+        head_rect = pygame.Rect(self.get_head_position(),
+                                (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, head_rect)
         pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
         if self.last:
@@ -94,36 +99,34 @@ class Snake(GameObject):
 
     def move(self):
         """Метод описывающий механизм движения объекта."""
-        self.x, self.y = self.get_head_position
+        x, y = self.get_head_position()
         direction_x, direction_y = self.direction
-        head_position_x = (self.x + (direction_x * GRID_SIZE)) % SCREEN_WIDTH
-        head_position_y = (self.y + (direction_y * GRID_SIZE)) % SCREEN_HEIGHT
+        head_position_x = (x + (direction_x * GRID_SIZE)) % SCREEN_WIDTH
+        head_position_y = (y + (direction_y * GRID_SIZE)) % SCREEN_HEIGHT
         self.positions.insert(0, (head_position_x, head_position_y))
         """Строка возвращающая значение первого элемента объекта."""
-
-        self.x = 0 if self.x > GRID_WIDTH else self.x
-        self.x = GRID_WIDTH if self.x < 0 else self.x
-        self.y = 0 if self.y > GRID_HEIGHT else self.y
-        self.y = GRID_HEIGHT if self.y < 0 else self.y
+        x = 0 if x > GRID_WIDTH else x
+        x = GRID_WIDTH if x < 0 else x
+        y = 0 if y > GRID_HEIGHT else y
+        y = GRID_HEIGHT if y < 0 else y
         """Возможность сквозного прохода объектом границ поля игры."""
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
             self.last = None
 
-    @property
     def get_head_position(self):
-        """Декоратор класса Snake."""
+        """Метод класса возвращающий координаты первого элемента объекта."""
         return self.positions[0]
 
     def reset(self):
         """Метод сброса значения змейки, до исходного состояния."""
         self.length = 1
         self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
-        self.direction = randint(UP, DOWN, RIGHT, LEFT)
+        self.direction = randint(RIGHT, LEFT)
 
     def update_direction(self):
-        """Метод обновляющий местоположение элемента объекта."""
+        """Метод обновления направления движения объекта."""
         if self.next_direction:
             self.direction = self.next_direction
             self.next_direction = None
@@ -158,20 +161,15 @@ def main():
         """Основной цикл игры."""
         clock.tick(SPEED)
         handle_keys(snake)
-        snake.update_direction
+        snake.update_direction()
         apple.draw()
         snake.draw()
         snake.move()
 
-        if snake.get_head_position == apple.position:
+        if snake.get_head_position() == apple.position:
             """Проверка на наличие объекта класса Aplle в координатах Snake."""
-
             snake.length += 1
             apple.randomize_position(snake.positions)
-
-        if snake.get_head_position in snake.positions:
-            """Проверка на столкновение объекта класса Snake с собой."""
-            snake.reset
 
         pygame.display.update()
 
