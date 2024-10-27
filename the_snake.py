@@ -54,7 +54,7 @@ class Apple(GameObject):
         super().__init__(position=position, body_color=body_color)
         self.randomize_position([position])
 
-    def randomize_position(self, restricted_area) -> None:
+    def randomize_position(self, restricted_area: tuple = ()) -> None:
         """Метод случайного местонахождения объекта класса Apple."""
         while self.position in restricted_area:
             self.position = (
