@@ -44,7 +44,6 @@ class GameObject:
     def draw(self):
         """Родительский метод отрисовки."""
         raise NotImplementedError
-    # TODO переопределить в дочерних классах
 
 
 class Apple(GameObject):
